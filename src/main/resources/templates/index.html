@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Frizeria Memo</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        .hero-section {
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1503951914875-befbb7c91e53?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 150px 0;
+            text-align: center;
+        }
+
+        .service-card {
+            transition: all 0.3s ease;
+            border: none;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .service-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-primary {
+            background-color: #d4af37;
+            border-color: #d4af37;
+        }
+
+        .btn-primary:hover {
+            background-color: #b5952f;
+            border-color: #b5952f;
+        }
+    </style>
+</head>
+
+<body class="bg-light">
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#">Frizeria Memo</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="#acasa">Acasă</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#servicii">Servicii</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#locatie">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <div id="acasa" class="hero-section">
+        <div class="container">
+            <h1 class="display-2 fw-bold mb-4">Frizeria Memo</h1>
+            <p class="lead mb-4 fs-3">Stilul tău, Semnătura noastră.</p>
+            <a href="#servicii" class="btn btn-primary btn-lg px-5 py-3 rounded-pill fw-bold">Vezi Servicii</a>
+        </div>
+    </div>
+
+    <!-- Services Section -->
+    <div id="servicii" class="container py-5">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold display-5">Serviciile Noastre</h2>
+            <div class="d-inline-block bg-primary" style="height: 3px; width: 100px;"></div>
+        </div>
+
+        <div class="row g-4">
+            <!-- Iterate over services -->
+            <div class="col-md-4" th:each="serviciu : ${servicii}">
+                <div class="card h-100 shadow-sm service-card text-center py-4">
+                    <div class="card-body">
+                        <div class="mb-3 text-primary">
+                            <i class="bi bi-scissors fs-1"></i>
+                        </div>
+                        <h3 class="card-title fw-bold" th:text="${serviciu.nume}">Tuns</h3>
+                        <h1 class="card-text text-dark my-3 display-4 fw-bold">
+                            <span th:text="${serviciu.pret}">50</span> Lei
+                        </h1>
+                        <p class="text-muted mb-4">
+                            <i class="bi bi-clock-history me-1"></i>
+                            <span th:text="${serviciu.durataMinute}">30</span> minute
+                        </p>
+                        <!-- Button triggers modal with specific service data -->
+                        <!-- Button triggers modal with specific service data -->
+                        <button class="btn btn-outline-dark w-75 rounded-pill" th:data-id="${serviciu.id}"
+                            th:data-name="${serviciu.nume}"
+                            onclick="openBookingModal(this.getAttribute('data-id'), this.getAttribute('data-name'))">
+                            Programează-te
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 text-center" th:if="${#lists.isEmpty(servicii)}">
+                <div class="alert alert-warning">Nu s-au găsit servicii în baza de date.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Booking Modal -->
+    <div class="modal fade" id="bookingModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title">Programare Nouă: <span id="modalServiceName" class="text-warning"></span>
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="bookingForm" onsubmit="submitBooking(event)">
+                        <input type="hidden" id="serviceId">
+
+                        <!-- Client Auth Section -->
+                        <div class="alert alert-info py-2">
+                            <small><i class="bi bi-info-circle"></i> Autentificare necesară</small>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input type="email" class="form-control" id="email" placeholder="name@example.com" required
+                                value="client@test.com">
+                            <label for="email">Email</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="password" class="form-control" id="password" placeholder="Password" required
+                                value="pass123">
+                            <label for="password">Parola</label>
+                        </div>
+
+                        <hr>
+
+                        <div class="form-floating mb-3">
+                            <input type="number" class="form-control" id="clientId" placeholder="ID Client" required
+                                value="1">
+                            <label for="clientId">ID Clientului (ex: 1)</label>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input type="datetime-local" class="form-control" id="date" required>
+                            <label for="date">Data și Ora</label>
+                        </div>
+
+                        <div id="bookingResult" class="d-none alert"></div>
+
+                        <button type="submit" class="btn btn-primary w-100 py-2 fw-bold">Confirmă Programarea</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div id="locatie" class="bg-dark text-white py-4 mt-5">
+        <div class="container text-center">
+            <h4 class="mb-3">Frizeria Memo</h4>
+            <p><i class="bi bi-geo-alt-fill text-primary"></i> Strada Exemplului Nr. 1, Brașov</p>
+            <p><i class="bi bi-envelope-fill text-primary"></i> contact@frizeriamemo.ro</p>
+            <hr class="w-50 mx-auto border-secondary">
+            <small class="text-muted">&copy; 2026 Toate drepturile rezervate.</small>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS + Custom Script -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Init Modal
+        const bookingModal = new bootstrap.Modal(document.getElementById('bookingModal'));
+
+        function openBookingModal(id, name) {
+            document.getElementById('serviceId').value = id;
+            document.getElementById('modalServiceName').innerText = name;
+
+            // Set default date to tomorrow 10:00
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            tomorrow.setHours(10, 0, 0, 0);
+            document.getElementById('date').value = tomorrow.toISOString().slice(0, 16);
+
+            bookingModal.show();
+        }
+
+        async function submitBooking(e) {
+            e.preventDefault();
+
+            const btn = e.target.querySelector('button[type="submit"]');
+            const resultDiv = document.getElementById('bookingResult');
+            const serviceId = document.getElementById('serviceId').value;
+            const clientId = document.getElementById('clientId').value;
+            const date = document.getElementById('date').value;
+            const email = document.getElementById('email').value;
+            const pass = document.getElementById('password').value;
+
+            // Basic Auth
+            const auth = btoa(email + ":" + pass);
+
+            const payload = {
+                dataOra: date,
+                status: "CONFIRMAT",
+                client: { id: parseInt(clientId) },
+                angajat: { id: 1 }, // Default random employee
+                serviciu: { id: parseInt(serviceId) }
+            };
+
+            btn.disabled = true;
+            btn.innerText = "Se procesează...";
+
+            try {
+                const response = await fetch('/api/programari', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Basic ' + auth
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.ok) {
+                    resultDiv.className = 'alert alert-success mt-3';
+                    resultDiv.innerText = 'Programare reușită! Te așteptăm.';
+                    resultDiv.classList.remove('d-none');
+                    setTimeout(() => {
+                        bookingModal.hide();
+                        resultDiv.classList.add('d-none');
+                    }, 2000);
+                } else {
+                    resultDiv.className = 'alert alert-danger mt-3';
+                    resultDiv.innerText = 'Eroare: ' + response.status + ' Verificați datele.';
+                    resultDiv.classList.remove('d-none');
+                }
+            } catch (err) {
+                console.error(err);
+                resultDiv.className = 'alert alert-danger mt-3';
+                resultDiv.innerText = 'Eroare de conexiune.';
+                resultDiv.classList.remove('d-none');
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "Confirmă Programarea";
+            }
+        }
+    </script>
+</body>
+
+</html>
