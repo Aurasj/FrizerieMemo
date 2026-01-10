@@ -4,8 +4,30 @@ services:
     image: auras0/barbershop-memo:latest
     ports:
       - "80:8081"
+      - "8081:8081"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://db-frizerie-memo.mysql.database.azure.com:3306/barbershop?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&requireSSL=false
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/barbershop?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&requireSSL=false
       SPRING_DATASOURCE_USERNAME: user
-      SPRING_DATASOURCE_PASSWORD: admin@1234
+      SPRING_DATASOURCE_PASSWORD: SecureBarber2026!
       JAVA_TOOL_OPTIONS: "-Djava.security.egd=file:/dev/./urandom"
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: always
+
+  db:
+    image: mysql:8.0
+    # Added --require_secure_transport=OFF to allow non-SSL connections from the app
+    command: --default-authentication-plugin=mysql_native_password --require_secure_transport=OFF
+    restart: always
+    environment:
+      MYSQL_DATABASE: barbershop
+      MYSQL_USER: user
+      MYSQL_PASSWORD: SecureBarber2026!
+      MYSQL_ROOT_PASSWORD: RootPassword123!
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost", "-u", "root", "-pRootPassword123!"]
+      interval: 10s
+      timeout: 10s
+      retries: 20
+      start_period: 60s
