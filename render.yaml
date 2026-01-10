@@ -1,18 +1,18 @@
 services:
- 
+  # 1. BAZA DE DATE (O păcălim că e site web ca să fie GRATIS)
   - type: web
     name: barbershop-db
     env: docker
-    region: frankfurt  
+    region: frankfurt
     plan: free
-    image: mysql:8.0
+    dockerfilePath: ./Dockerfile.db  # Aici e schimbarea!
     envVars:
       - key: MYSQL_DATABASE
         value: barbershop
       - key: MYSQL_ROOT_PASSWORD
         value: root
 
-
+  # 2. APLICAȚIA JAVA
   - type: web
     name: barbershop-app
     env: docker
@@ -20,7 +20,7 @@ services:
     plan: free
     envVars:
       - key: SPRING_DATASOURCE_URL
-       
+        # Se leagă la 'barbershop-db'
         value: jdbc:mysql://barbershop-db:3306/barbershop?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false
       - key: SPRING_DATASOURCE_USERNAME
         value: root
