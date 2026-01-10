@@ -1,19 +1,11 @@
 version: '3.8'
 services:
-  db:
-    image: mysql:8.0
-    environment:
-      MYSQL_DATABASE: barbershop
-      MYSQL_ROOT_PASSWORD: root
-
   app:
     image: auras0/barbershop-memo:latest
     ports:
       - "80:8081"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/barbershop?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: root
+      SPRING_DATASOURCE_URL: jdbc:mysql://db-frizerie-memo.mysql.database.azure.com:3306/barbershop?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&requireSSL=false
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: admin@1234
       JAVA_TOOL_OPTIONS: "-Djava.security.egd=file:/dev/./urandom"
-    depends_on:
-      - db
