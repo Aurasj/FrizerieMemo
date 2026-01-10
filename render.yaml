@@ -1,23 +1,22 @@
 services:
   # MySQL Database Service (Private Service)
+  # WARNING: Private Services require a PAID plan on Render (Starter or higher).
   - type: pserv
     name: mysql
-    env: docker
-    image: mysql:8.0
+    region: ohio
+    image: mysql:8
     envVars:
       - key: MYSQL_DATABASE
         value: barbershop
       - key: MYSQL_ROOT_PASSWORD
         value: root
-      # Note: On the Free tier, data is not persistent. 
-      # For persistence, add a 'disk' section (requires paid tier).
 
   # Spring Boot Application Service (Web Service)
   - type: web
     name: barbershop-app
     env: docker
     region: ohio
-    plan: free # Use free tier
+    plan: free # Use free tier for the app
     envVars:
       - key: SPRING_DATASOURCE_URL
         value: jdbc:mysql://mysql:3306/barbershop?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
