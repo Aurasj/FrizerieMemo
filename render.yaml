@@ -1,25 +1,27 @@
 services:
-  # MySQL Database Service (Private Service)
-  # WARNING: Private Services require a PAID plan on Render (Starter or higher).
-  - type: pserv
-    name: mysql
-    region: ohio
-    image: mysql:8
+ 
+  - type: web
+    name: barbershop-db
+    env: docker
+    region: frankfurt  
+    plan: free
+    image: mysql:8.0
     envVars:
       - key: MYSQL_DATABASE
         value: barbershop
       - key: MYSQL_ROOT_PASSWORD
         value: root
 
-  # Spring Boot Application Service (Web Service)
+
   - type: web
     name: barbershop-app
     env: docker
-    region: ohio
-    plan: free # Use free tier for the app
+    region: frankfurt
+    plan: free
     envVars:
       - key: SPRING_DATASOURCE_URL
-        value: jdbc:mysql://mysql:3306/barbershop?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
+       
+        value: jdbc:mysql://barbershop-db:3306/barbershop?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false
       - key: SPRING_DATASOURCE_USERNAME
         value: root
       - key: SPRING_DATASOURCE_PASSWORD
