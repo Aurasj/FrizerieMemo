@@ -11,7 +11,7 @@ services:
     ports:
       - "80:8081"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/barbershop?createDatabaseIfNotExist=true&useSSL=false
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/barbershop?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
     depends_on:
