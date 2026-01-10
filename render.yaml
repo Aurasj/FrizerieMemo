@@ -1,6 +1,6 @@
 services:
   # MySQL Database Service (Private Service)
-  - type: pservice
+  - type: pserv
     name: mysql
     env: docker
     image: mysql:8.0
